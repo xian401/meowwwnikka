@@ -1,0 +1,841 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>For My Baby</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+  --bg1: #ffd6e8;    /* slightly deeper soft pink */
+  --bg2: #ffc0d9;    /* a warmer soft pink gradient */
+  --hot: #ff1a8c;    /* hot pink main */
+  --hot-2: #ff3a9e;  /* secondary hot */
+  --muted: #7a4960;
+  --card-shadow: 0 12px 36px rgba(255,26,140,0.12);
+  --glass: rgba(255,255,255,0.7);
+  --accent-lite: rgba(255,26,140,0.06);
+  --pixel-size: 6px;
+  --radius: 14px;
+  font-family: "Poppins", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+        *{box-sizing:border-box}
+        html,body{height:100%}
+       body{
+  margin:0;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  color:var(--muted);
+}
+
+
+        /* Card */
+        .wrap{
+          width:980px;
+          max-width:100%;
+          background: linear-gradient(180deg, rgba(255,255,255,0.85), #fff);
+          border-radius:20px;
+          padding:22px;
+          box-shadow:var(--card-shadow);
+          overflow:hidden;
+          border:1px solid rgba(255,26,140,0.06);
+        }
+
+        .lock-screen{
+          display:flex;
+          gap:22px;
+          align-items:center;
+          justify-content:space-between;
+          padding:8px;
+        }
+
+        /* Pixel cat (CSS-only pixel-art) */
+        .pixel-cat-wrap{
+          display:flex;
+          align-items:center;
+          gap:12px;
+        }
+        .pixel-cat {
+          width: calc(var(--pixel-size) * 12);
+          height: calc(var(--pixel-size) * 12);
+          image-rendering: pixelated;
+          transform-origin: center;
+          filter: drop-shadow(0 8px 14px rgba(255,26,140,0.12));
+          animation: cat-bob 2.2s ease-in-out infinite;
+          display:inline-block;
+          box-shadow: 0 0 0 2px rgba(0,0,0,0.02) inset;
+        }
+        @keyframes cat-bob{
+          0%{transform:translateY(0) scale(1)}
+          25%{transform:translateY(-3px) scale(1.02)}
+          50%{transform:translateY(0) scale(1)}
+          75%{transform:translateY(-2px) scale(1.01)}
+          100%{transform:translateY(0) scale(1)}
+        }
+
+        /* Build the cat grid with inline-grid of divs */
+        .cat-grid{
+          display:grid;
+          grid-template-columns: repeat(12, var(--pixel-size));
+          grid-auto-rows: var(--pixel-size);
+          gap:0;
+          width: calc(var(--pixel-size) * 12);
+          height: calc(var(--pixel-size) * 12);
+          transform: scale(1);
+          image-rendering: pixelated;
+        }
+        .px{width:var(--pixel-size);height:var(--pixel-size);}
+
+        /* Colors used for pixel cat */
+        .c-clear{background:transparent}
+        .c-white{background:#fff}
+        .c-pink{background:var(--hot)}
+        .c-dpink{background:var(--hot-2)}
+        .c-gray{background:#222}
+        .c-skin{background:#ffd6e8}
+        .c-eye{background:#0a0a0a}
+        .c-nose{background:#ff6fa1}
+        .c-accent{background:#ffeef8}
+
+        /* Lock info */
+        .lock-info{flex:1;min-width:280px}
+        .title{
+          margin:0 0 8px;
+          font-size:20px;
+          color:var(--hot);
+          font-weight:800;
+          letter-spacing:0.2px;
+        }
+        .lead{margin:0 0 16px;color:var(--muted);font-size:15px;line-height:1.35}
+
+        .code-row{display:flex;gap:10px;align-items:center}
+        .code{font-size:18px;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,26,140,0.12);width:200px;outline:none;background:transparent}
+        .code:focus{box-shadow:0 6px 18px rgba(255,26,140,0.08);border-color:var(--hot)}
+        .unlock{background:linear-gradient(90deg,var(--hot),var(--hot-2));border:none;color:white;padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(255,26,140,0.12)}
+        .hint{font-size:13px;color:#b85a7a;margin-top:10px}
+
+        /* Main (hidden until unlock) */
+        .main{display:none;padding-top:18px}
+        .greeting{display:flex;align-items:center;gap:14px}
+        .greeting h2{margin:0;color:var(--hot);font-weight:800;font-size:18px}
+        .open-count{margin-left:auto;font-size:13px;color:#a06f86}
+
+        /* Grid cards */
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:18px}
+        .card{
+          background: linear-gradient(180deg, rgba(255,255,255,0.9), #fff);
+          border-radius:12px;
+          padding:14px;
+          box-shadow: 0 10px 30px rgba(255,26,140,0.04);
+          text-align:center;
+          cursor:pointer;
+          border:1px solid rgba(255,26,140,0.06);
+          transition: transform .18s ease, box-shadow .18s ease;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          gap:8px;
+          min-height:120px;
+        }
+        .card:hover{transform:translateY(-8px);box-shadow:0 18px 42px rgba(255,26,140,0.12)}
+        .icon-wrap{width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,var(--accent-lite),transparent);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -4px 12px rgba(255,26,140,0.02)}
+        .card h3{margin:0;font-size:15px;color:#4b1b30;font-weight:700}
+        .card p{margin:0;font-size:13px;color:#8a5a73}
+
+        footer{margin-top:18px;font-size:13px;color:#a35b73;text-align:center}
+
+        /* Modal */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+        .paper{background:white;border-radius:12px;padding:18px;max-width:820px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,0.25)}
+        .close{float:right;background:none;border:0;font-size:18px;cursor:pointer}
+        .letters{max-height:420px;overflow:auto;padding-right:6px}
+        .small{font-size:13px;color:#7a4960}
+
+        /* Reasons */
+        .reason-box{min-height:120px;border-radius:10px;padding:16px;background:linear-gradient(180deg,#fff,#fff);border:1px dashed rgba(255,26,140,0.14);display:flex;align-items:center;justify-content:center;font-weight:700;color:#b04470}
+
+        /* Responsive */
+        @media(max-width:760px){
+          .lock-screen{flex-direction:column;align-items:flex-start}
+          .greeting{flex-direction:column;align-items:flex-start}
+          .pixel-cat { transform:scale(0.85) }
+        }
+
+        /* Simple pixel icons (keep pixel aesthetic) */
+        .svg-icon{width:26px;height:26px;image-rendering:pixelated;display:block}
+        .icon-sm{width:20px;height:20px}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="lock-screen" id="screen">
+        <!-- GIF added above lock icon -->
+        <div class="pixel-cat-wrap" style="flex-direction:column;align-items:center;gap:12px">
+            <!-- New GIF -->
+            <img src="https://media.tenor.com/lvd_VOW9MtQAAAAj/hehe.gif" alt="cute gif" style="width:120px;height:auto;border-radius:12px;box-shadow:0 8px 14px rgba(255,26,140,0.12);" />
+
+            <!-- small lock badge as pixel-icon (svg) -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="3" y="10" width="18" height="10" rx="2" stroke="none" fill="#ff3a9e"/>
+                    <rect x="7" y="10" width="10" height="6" rx="1.2" fill="#fff"/>
+                    <path d="M9 10V8a3 3 0 0 1 6 0v2" stroke="#fff" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size:11px;color:#b85a7a;margin-top:6px">secret</div>
+            </div>
+        </div>
+
+
+
+
+        <div class="lock-info">
+            <h1 class="title">All for you, Nikka Angela Lu</h1>
+            <p class="lead">Type the secret code to unlock your little surprise. </p>
+
+            <div class="code-row">
+                <input class="code" id="codeInput" maxlength="6" placeholder="Enter code" />
+                <button class="unlock" id="unlockBtn">Unlock</button>
+            </div>
+            <div class="hint">(Hint: it's our special date. yung grabe kilig sa gwapo ko)</div>
+        </div>
+    </div>
+
+
+    <!-- Main content (hidden until unlocked) -->
+    <div class="main" id="main">
+        <div class="greeting">
+            <h2>Hi baby, are you ready to open your gifts?</h2>
+            <div class="open-count">opened <span id="openCount">0</span> times</div>
+        </div>
+
+        <div class="grid">
+            <div class="card" id="loveLettersBtn" role="button" tabindex="0">
+                <div class="icon-wrap">
+                    <!-- Love Letter GIF -->
+                    <img src="https://media.tenor.com/0rHZLXhmuswAAAAi/love-letter.gif"
+                         alt="love and mood letter for the prettiest"
+                         style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+                </div>
+                <h3>Love Letters</h3>
+                <p>letters for you my very pretty gf</p>
+            </div>
+
+
+            <div class="card" id="musicBtn" role="button" tabindex="0">
+                <div class="icon-wrap">
+                    <!-- Music GIF -->
+                    <img src="https://media.tenor.com/IZH_k7F9aqcAAAAi/music.gif"
+                         alt="music"
+                         style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+                </div>
+                <h3>Music for You</h3>
+                <p>Tap to play our songs</p>
+            </div>
+
+
+            <div class="card" id="flowersBtn" role="button" tabindex="0">
+                <div class="icon-wrap">
+                    <!-- Tulip GIF -->
+                    <img src="https://media.tenor.com/voY0w2j5UjYAAAAi/cosytales-bouquet.gif"
+                         alt="tulip bouquet"
+                         style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+                </div>
+                <h3>Tulip Bouquet</h3>
+                <p>Tap a flower for a little message</p>
+            </div>
+
+            <div class="card" id="galleryBtn" role="button" tabindex="0">
+                <div class="icon-wrap">
+                    <!-- Gallery GIF -->
+                    <img src="https://media1.tenor.com/m/_mt3AgeFNV0AAAAd/pink-white-cam-cam.gif"
+                         alt="gallery"
+                         style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+                </div>
+                <h3>Gallery</h3>
+                <p>Collage of our moments</p>
+            </div>
+
+
+            <div class="card" id="reasonsBtn" role="button" tabindex="0">
+                <div class="icon-wrap">
+                    <!-- Hearts GIF -->
+                    <img src="https://media.tenor.com/U3Kve1VdRYAAAAAi/hearts-pink-hearts.gif"
+                         alt="pink hearts"
+                         style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+                </div>
+                <h3>100 Reasons</h3>
+                <p>Find a reason why I love you — random each click</p>
+            </div>
+        </div>
+
+        <footer>Xian <strong style="color:var(--hot)">♥</strong> </footer>
+    </div>
+</div>
+
+<!-- Love Letters Modal -->
+<div class="modal" id="lettersModal">
+    <div class="paper">
+        <button class="close" onclick="closeModal('lettersModal')">✖</button>
+        <h3>Your Mood Letters</h3>
+        <div class="letters">
+            <p>Hi baby, how are you feeling today?</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                <button onclick="showLetter('happy')" class="unlock">
+                    <img src="https://media.tenor.com/NFAZkuLYdqwAAAAi/%EB%AA%A8%EB%AA%A8%EC%B0%8C-%ED%8C%94%EC%A7%9D%ED%8C%94%EC%A7%9D.gif"
+                         alt="happy"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Happy
+                </button>
+                <button onclick="showLetter('sad')" class="unlock">
+                    <img src="https://media.tenor.com/J1RlH1ppxRgAAAAi/sad-sappy.gif"
+                         alt="sad"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Sad
+                </button>
+                <button onclick="showLetter('tired')" class="unlock">
+                    <img src="https://media.tenor.com/5OPvZL-TCvQAAAAi/bubu-dudu-sseeyall.gif"
+                         alt="tired"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Tired
+                </button>
+                <button onclick="showLetter('angry')" class="unlock">
+                    <img src="https://media.tenor.com/I0A4JG4CK4kAAAAi/bubu-dudu.gif"
+                         alt="angry"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Angry
+                </button>
+                <button onclick="showLetter('miss')" class="unlock">
+                    <img src="https://media.tenor.com/PPwpdWipNu8AAAAi/miss-you.gif"
+                         alt="miss"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Missing Me
+                </button>
+                <button onclick="showLetter('notok')" class="unlock">
+                    <img src="https://media.tenor.com/EgI1X4MQftEAAAAi/forgive-me-bubu-bubu-angry.gif"
+                         alt="not okay"
+                         style="width:28px;height:28px;border-radius:6px;vertical-align:middle;margin-right:4px">
+                    Not Okay
+                </button>
+            </div>
+
+
+            <div id="moodLetter" style="margin-top:16px;font-weight:700;color:#b04470;white-space:pre-line"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Original inline script removed; functionality moved to script.js -->
+
+
+
+<div class="modal" id="musicModal">
+    <div class="paper">
+        <button class="close" onclick="closeModal('musicModal')">✖</button>
+        <h3>Music for You</h3>
+        <p class="small">Play our favorite songs, baby.
+            Click a song below to let the love play on.
+            Every beat is a reminder—I'm right here, loving you.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <button class="card" onclick="playSong('pSg1IOyHv6M')">
+                <img src="https://media.tenor.com/mYZWCx5xvI4AAAAi/richer-solutions-richard-liverman.gif"
+                     alt="song 1"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="playSong('WHyzv1sjXTw')">
+                <img src="https://media.tenor.com/mYZWCx5xvI4AAAAi/richer-solutions-richard-liverman.gif"
+                     alt="song 2"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="playSong('fu9yk7gCTbc')">
+                <img src="https://media.tenor.com/mYZWCx5xvI4AAAAi/richer-solutions-richard-liverman.gif"
+                     alt="song 3"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+        </div>
+
+        <div style="margin-top:12px">
+            <iframe id="ytPlayer" width="100%" height="320" src="https://www.youtube.com/embed/pSg1IOyHv6M" title="YouTube player" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="flowersModal">
+    <div class="paper">
+        <button class="close" onclick="closeModal('flowersModal')">✖</button>
+        <h3>Tulip Bouquet</h3>
+        <p>pick and tap a flower for a little message</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <button class="card" onclick="flowerMsg('I love youuuuu alwaysss')">
+                <img src="https://media.tenor.com/8_B8mA2stAoAAAAj/pink-rose-for-you.gif"
+                     alt="flower 1"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="flowerMsg('I am always here for you.')">
+                <img src="https://media.tenor.com/8_B8mA2stAoAAAAj/pink-rose-for-you.gif"
+                     alt="flower 2"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="flowerMsg('So pretty mo always, love')">
+                <img src="https://media.tenor.com/8_B8mA2stAoAAAAj/pink-rose-for-you.gif"
+                     alt="flower 3"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="flowerMsg('Super proud na ko sa iyo, always.')">
+                <img src="https://media.tenor.com/8_B8mA2stAoAAAAj/pink-rose-for-you.gif"
+                     alt="flower 4"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+            <button class="card" onclick="flowerMsg('mwaaa, rawr')">
+                <img src="https://media.tenor.com/8_B8mA2stAoAAAAj/pink-rose-for-you.gif"
+                     alt="flower 5"
+                     style="width:44px; height:44px; border-radius:8px; object-fit:cover;" />
+            </button>
+        </div>
+        <div id="flowerMsg" style="margin-top:12px;font-weight:700;color:#b04470"></div>
+    </div>
+</div>
+
+<div class="modal" id="galleryModal">
+    <div class="paper">
+        <button class="close" onclick="closeModal('galleryModal')">✖</button>
+        <h3>Gallery</h3>
+        <p class="small">You and me, in every frame, in every lifetime.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+            <img src="p1.jpg" alt="Photo 1" />
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="reasonsModal">
+    <div class="paper">
+        <button class="close" onclick="closeModal('reasonsModal')">✖</button>
+        <h3>Reasons Why I Love You</h3>
+        <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;align-items:center">
+            <div class="reason-card" style="flex:1">
+                <div class="reason-box" id="reasonBox">You are my favorite everything.</div>
+                <div class="controls" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                    <button class="unlock" onclick="newReason()">New reason</button>
+                    <div class="small">Preload count: <input id="preloadCount" type="number" min="30" max="100" value="100" style="width:72px;margin-left:8px"/></div>
+                    <button style="padding:8px;border-radius:8px;border:1px solid rgba(255,26,140,0.12);background:transparent;cursor:pointer" onclick="preload()">Reload Preload</button>
+                </div>
+            </div>
+            <div style="flex:1;min-width:220px">
+                <p class="small">Click "New reason" to show how much I love you in so many beautiful ways, love.
+                    Kung nag-wowonder ka or nag-ooverthink how much I love you, then here love. I love you, always, in ways you feel and in ways you haven’t even imagined yet. </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //////////////////////////
+    // Pixel cat data & draw
+    //////////////////////////
+    // We'll use a 12x12 pixel map. Each row is 12 characters; each character maps to a color class.
+    // Legend:
+    // . = clear
+    // w = white (inner)
+    // p = hot pink (body)
+    // d = deeper hot (accent)
+    // g = gray (outline)
+    // s = skin (lighter pink)
+    // e = eye (black)
+    // n = nose (pink)
+    // a = accent (bg)
+    //
+    // Two frames to animate subtle eye blink / tail bounce -> simulate a GIF.
+    const frames = [
+      [
+        "....gggggggg....".slice(0,12),
+        "..ggppppppgg..".padEnd(12,'.'), // Fallback filler - we will define properly below
+      ],
+      // We'll instead programmatically define two frames with explicit 12x12 arrays:
+    ];
+
+    // A clearer approach: define two 12x12 maps explicitly:
+    const map1 = [
+      "............",
+      "..ggg..ggg..",
+      ".gggppppggg.",
+      ".ggppppppgg.",
+      ".gpprppprpg.",
+      ".gprppppprg.",
+      ".gpppnnpppg.",
+      ".gppp..pppg.",
+      ".ggp....ppg.",
+      "..gppppppg..",
+      "...gppppg...",
+      "....gggg...."
+    ].map(r => r.padEnd(12,'.'));
+
+    const map2 = [
+      "............",
+      "..ggg..ggg..",
+      ".gggppppggg.",
+      ".ggppppppgg.",
+      ".gpprppprpg.",
+      ".gprppppprg.",
+      ".gpppnnpppg.",
+      ".gppp..pppg.",
+      ".ggp.  .ppg.".replace(' ',' '), // keep same - minor differences for blink
+      "..gppppppg..",
+      "...gppppg...",
+      "....gggg...."
+    ].map(r => r.padEnd(12,'.'));
+
+    // Map characters to CSS classes:
+    const charToClass = {
+      '.':'c-clear',
+      'w':'c-white',
+      'p':'c-pink',
+      'd':'c-dpink',
+      'g':'c-gray',
+      's':'c-skin',
+      'e':'c-eye',
+      'n':'c-nose',
+      'a':'c-accent',
+      'r':'c-pink' // reuse pink
+    };
+
+    // A handcrafted 12x12 pixel art that looks like a tiny pixel cat (two frames will animate eyes)
+    const frameA = [
+      "....gggggggg.",
+      "..ggppppppgg.",
+      ".gpppppppppg",
+      ".gpppwwppppg",
+      ".gpppwwppppg",
+      ".gpppnnppppg",
+      ".gppp..ppppg",
+      ".gppp..ppppg",
+      "..gppppppgg.",
+      "...gppppg...",
+      "....gggg....",
+      "............"
+    ];
+
+    const frameB = [
+      "....gggggggg.",
+      "..ggppppppgg.",
+      ".gpppppppppg",
+      ".gpppwwppppg",
+      ".gpppwwppppg",
+      ".gpppnnppppg",
+      ".gppp..ppppg",
+      ".gppp..ppppg",
+      "..gppppppgg.",
+      "...gppppg...",
+      "....gggg....",
+      "............"
+    ];
+
+    // To make a subtle blink, we'll change a couple of pixels for eyes:
+    frameA[3] = ".gpppweppppg".replace('e','e'); // eye open (e)
+    frameA[4] = ".gpppweppppg";
+    frameB[3] = ".gppp..ppppg"; // eye closed
+    frameB[4] = ".gppp..ppppg";
+
+    const framesFinal = [frameA, frameB];
+
+    // Fill the grid divs with classes and animate swap
+    (function renderPixelCat(){
+      const catGrid = document.getElementById('catGrid');
+      if(!catGrid) return;
+      const pixels = Array.from(catGrid.children); // 144 items
+      // Safety: ensure 144 pixels
+      if(pixels.length < 144){
+        // if not enough, create missing
+        const need = 144 - pixels.length;
+        for(let i=0;i<need;i++){
+          const d = document.createElement('div');
+          d.className='px c-clear';
+          catGrid.appendChild(d);
+        }
+      }
+
+      let idx = 0;
+      function applyFrame(frame){
+        for(let r=0;r<12;r++){
+          const row = (frame[r] || '').padEnd(12,'.');
+          for(let c=0;c<12;c++){
+            const ch = row[c] || '.';
+            const px = pixels[idx++];
+            // map some characters to classes:
+            let cls = charToClass[ch] || 'c-clear';
+            // small heuristics: p->pink, g->gray, n->nose
+            if(ch==='p') cls='c-pink';
+            if(ch==='g') cls='c-gray';
+            if(ch==='w') cls='c-white';
+            if(ch==='n') cls='c-nose';
+            if(ch==='e') cls='c-eye';
+            if(ch==='r') cls='c-dpink';
+            if(ch==='.') cls='c-clear';
+            px.className = 'px ' + cls;
+            idx++;
+          }
+        }
+      }
+
+      // We'll build a better frame array: map string frames to 12x12
+      const simpleFrames = [
+        [
+          "............",
+          "..gggggggg..",
+          ".ggppppppgg.",
+          ".gpppwwpppg.",
+          ".gpppwwpppg.",
+          ".gpppnnpppg.",
+          ".gppp..pppg.",
+          ".gppp..pppg.",
+          "..gppppppg..",
+          "...gppppg...",
+          "....gggg....",
+          "............"
+        ],
+        [
+          "............",
+          "..gggggggg..",
+          ".ggppppppgg.",
+          ".gppp..pppg.",
+          ".gppp..pppg.",
+          ".gpppnnpppg.",
+          ".gppp..pppg.",
+          ".gppp..pppg.",
+          "..gppppppg..",
+          "...gppppg...",
+          "....gggg....",
+          "............"
+        ]
+      ];
+
+      let fIndex = 0;
+      function draw(){
+        idx = 0;
+        const frame = simpleFrames[fIndex];
+        for(let r=0;r<12;r++){
+          const row = (frame[r] || '').padEnd(12,'.');
+          for(let c=0;c<12;c++){
+            const ch = row[c] || '.';
+            const pos = r*12 + c;
+            const px = catGrid.children[pos];
+            let cls = 'c-clear';
+            if(ch === 'p') cls='c-pink';
+            if(ch === 'g') cls='c-gray';
+            if(ch === 'w') cls='c-white';
+            if(ch === 'n') cls='c-nose';
+            if(ch === '.') cls='c-clear';
+            // map other pixels (use p as default for unknown spots)
+            if(ch === undefined) cls='c-clear';
+            px.className = 'px ' + cls;
+          }
+        }
+        fIndex = (fIndex+1) % simpleFrames.length;
+      }
+
+      // initial draw and set interval for animation to simulate GIF (blink)
+      draw();
+      setInterval(draw, 700);
+    })();
+
+    //////////////////////
+    // Unlock logic
+    //////////////////////
+    const correctCode = '122606'; 
+    const unlockBtn = document.getElementById('unlockBtn');
+    const codeInput = document.getElementById('codeInput');
+    const main = document.getElementById('main');
+    const screen = document.getElementById('screen');
+    let openTimes = 0;
+
+    function showMain(){
+      screen.style.display='none';
+      main.style.display='block';
+      openTimes++;
+      document.getElementById('openCount').textContent = openTimes;
+    }
+
+    unlockBtn.addEventListener('click',()=>{
+      const v = (codeInput.value || '').trim();
+      if(v === correctCode){
+        showMain();
+      } else {
+        codeInput.style.borderColor='rgba(255,110,150,0.9)';
+        codeInput.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:350});
+      }
+    });
+    codeInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') unlockBtn.click(); });
+
+    //////////////////////
+    // Modal helpers + bindings
+    //////////////////////
+    function openModal(id){ document.getElementById(id).style.display='flex'; }
+    function closeModal(id){ document.getElementById(id).style.display='none'; }
+
+    document.getElementById('loveLettersBtn').onclick = ()=> openModal('lettersModal');
+    document.getElementById('musicBtn').onclick = ()=> openModal('musicModal');
+    document.getElementById('flowersBtn').onclick = ()=> openModal('flowersModal');
+    document.getElementById('galleryBtn').onclick = ()=> openModal('galleryModal');
+    document.getElementById('reasonsBtn').onclick = ()=> openModal('reasonsModal');
+
+    // love letters
+    function showLetter(mood) {
+        const letters = {
+            happy: "I'm so glad you're happy, love! Your joy is my joy. Keep smiling because it's the most beautiful sight in the world. I love you so much!",
+            sad: "Baby, whatever is making you sad, please remember I'm here. Let me hug away all the sadness. You mean everything to me, and we'll get through it together. I love you.",
+            tired: "You've worked so hard, my love. It's time to rest. Close your eyes and imagine me cuddling you until you fall asleep. I'm so proud of you.",
+            angry: "Take a deep breath, love. Let me absorb all your frustrations. I'm here to listen, to understand, and to love you even through the storms. Rawr, I love you!",
+            miss: "I miss you too, baby! So much! Every moment apart just reminds me how much I need you. I'm sending you all my love until we're together again.",
+            notok: "It's completely okay to not be okay, love. Just lean on me. I'm your safe space, always. I love you unconditionally, no matter what you're feeling."
+        };
+        document.getElementById('moodLetter').textContent = letters[mood] || "";
+    }
+
+    // music
+    function playSong(id){
+      const iframe = document.getElementById('ytPlayer');
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+    }
+
+    // flowers
+    function flowerMsg(txt){ document.getElementById('flowerMsg').textContent = txt; }
+
+    // reasons list
+    const ALL_REASONS = [
+  "You are my favorite hello and hardest goodbye",
+  "Your laugh is my favorite song",
+  "You make simple moments magical",
+  "I love how you care sa akin",
+  "You make me want to be better, sorry love kung minsan ang pangit ng ugali ko",
+
+  "I love your pagka-cute, love",
+  "You understand me without words",
+  "I love your mood swings",
+  "You are endlessly kind",
+  "I love you",
+  "You make me laugh even when I try not to",
+  "You always there when I need you the most love",
+  "Your my safe place",
+  "You make ordinary days special",
+  "I love you",
+  "You inspire me always my babycakes",
+  "Your presence comforts me",
+  "I love your taste in music",
+  "You are my favorite kaaway HAHAHHA",
+  "I love your warmth",
+  "You always notice the little things about sa akin",
+  "I love you",
+  "You challenge me in the best way",
+  "I love your courage",
+  "You smell like my favorite memory",
+  "I love you",
+  "You believe in me",
+  "I love your bedtime stories",
+  "You are my calm in the storm",
+  "I love you",
+  "You make me proud love",
+  "I love your honesty",
+  "You are my favorite hello",
+  "I love how you forgive",
+  "You make me smile for no reason",
+  "I love your taste in movies",
+  "You are my favorite secret",
+  "I love you, love", 
+  "You make the worst days better",
+  "I love your late-night talks",
+  "You make my heart race",
+  "I love your courage to dream",
+  
+  
+  "You are my favorite person to be silly with",
+  "I love your thoughtful messages",
+  "You make me feel safe",
+  "I love your creativity",
+  "You make me feel seen",
+  "I love your stubbornness sometimes",
+  "You are my forever mood bad mood HAHAHAH",
+  "I love youuuu so muchhh",
+  "You are my sunshine on cloudy days",
+  "I love the way you plan surprises",
+  "You make my heart soft",
+  "I love your steady support",
+  "You are the calm to my chaos kahit ikaw yung chaos minsan HAHAHHAH",
+  "Super love ko yung pagka-maldita mo depende na lang sa intindihan",
+  "You make me believe in forever",
+  "I love how you learn new things with me",
+  "Love ko yung mga utos mo sa akin na kahit sobrang dali pinapahirapan mo pa HAHAHHA",
+  "I love the way you apologize isa pa lang na sorry dapat okay na",
+  "You are the best part of my day",
+  "I love our late-night conversation na nauuwi sa away",
+  "You always brighten my messages",
+  "I love your patience na wala minsan with me",
+  "Cute ka talaga",
+  "You ang favorite kong kachika hehe exciting always",
+  "You are my favorite",
+  "I love your sense of wonder",
+  "You make me feel like magic",
+  "I love your courage to be vulnerable",
+  "Love yahhhhhhhh",
+  "I love your smiles",
+  "You are my favorite support system",
+  "I love youuuuuuuuuu don't ask why",
+  "You make me believe in fate",
+  "I love your freaky thoughts rawrrr",
+  "You are my warm blanket on cold nights akin na talaga yung kumot mo love",
+  "I love the way you celebrate my wins our wins love",
+  "You nag-cocomplete ng days ko hehe",
+
+  "You are my best friend and lover",
+  "Just I love you",
+  "I love how ka nag-woworry sa akin na nagagalit ka na lang minsan",
+  "I love kung gaano ka ka-strong baby kahit pagod ka na sa school minsan nag-mamake time ka pa talaga for me",
+  "You always push me to try",
+  "I love how mo ko hina-handle lalo na sa mga days na kailangan ko",
+  "You are my favorite memory maker",
+  "I love your warm texts in the morning",
+  "Lagi mo kong iniintindi kahit sobra na akong sakit ng ulo love",
+  "Super ganda mo",
+  "You are my home",
+  "I love every little thing about you",
+  "I love every little thing about you."
+  ];
+
+
+    let activeReasons = [];
+
+    function preload(){
+      const count = Math.max(30, Math.min(100, Number(document.getElementById('preloadCount').value || 100)));
+      activeReasons = ALL_REASONS.slice(0,count);
+      document.getElementById('reasonBox').textContent = 'Preloaded ' + activeReasons.length + ' reasons — click "New reason"';
+    }
+
+    function newReason(){
+      if(!activeReasons.length) preload();
+      const idx = Math.floor(Math.random()*activeReasons.length);
+      document.getElementById('reasonBox').textContent = activeReasons[idx];
+    }
+
+    preload();
+
+    // close modal on outside click
+    document.querySelectorAll('.modal').forEach(m => {
+      m.addEventListener('click', (e)=>{ if(e.target===m) closeModal(m.id); })
+    });
+
+    // make cards keyboard accessible (Enter)
+    document.querySelectorAll('.card[role="button"]').forEach(card=>{
+      card.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' ') card.click();
+      });
+    });
+</script>
+</body>
+</html>
